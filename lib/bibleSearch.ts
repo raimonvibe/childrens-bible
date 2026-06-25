@@ -9,6 +9,7 @@ export interface Book {
   id: string
   name: string
   abbreviation: string
+  testament?: Testament
   chapters: Chapter[]
 }
 
@@ -55,12 +56,25 @@ const NT_BOOK_IDS = new Set([
   '1PE', '2PE', '1JN', '2JN', '3JN', 'JUD', 'REV',
 ])
 
+const PROJECT_NT_BOOK_IDS = new Set(['CSB-NT', 'MSNT'])
+const PROJECT_OT_BOOK_IDS = new Set(['CSB-OT'])
+
 export const MAX_SEARCH_RESULTS = 150
 const SNIPPET_MAX_LENGTH = 220
 const SNIPPET_CONTEXT = 70
 
 export function getTestament(bookId: string): Testament {
-  return NT_BOOK_IDS.has(bookId) ? 'new' : 'old'
+  const rootId = bookId.split('.')[0]
+
+  if (PROJECT_NT_BOOK_IDS.has(rootId)) return 'new'
+  if (PROJECT_OT_BOOK_IDS.has(rootId)) return 'old'
+  if (NT_BOOK_IDS.has(bookId) || NT_BOOK_IDS.has(rootId)) return 'new'
+
+  return 'old'
+}
+
+export function resolveTestament(book: Pick<Book, 'id' | 'testament'>): Testament {
+  return book.testament ?? getTestament(book.id)
 }
 
 function escapeRegex(value: string): string {
@@ -257,7 +271,7 @@ export function searchBible(bibleData: BibleData, options: SearchOptions): Searc
   const results: SearchResult[] = []
 
   for (const book of bibleData.books) {
-    const testament = getTestament(book.id)
+    const testament = resolveTestament(book)
 
     if (options.testament !== 'all' && options.testament !== testament) continue
     if (options.bookId && options.bookId !== book.id) continue

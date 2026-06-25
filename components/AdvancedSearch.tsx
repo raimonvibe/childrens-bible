@@ -12,9 +12,9 @@ import {
   type BibleData,
   type MatchMode,
   type SearchResult,
-  getTestament,
   highlightMatch,
   MAX_SEARCH_RESULTS,
+  resolveTestament,
   searchBible,
 } from '@/lib/bibleSearch'
 
@@ -72,7 +72,7 @@ export default function AdvancedSearch({
 
   const filteredBooks = useMemo(() => {
     if (testament === 'all') return bibleData.books
-    return bibleData.books.filter((book) => getTestament(book.id) === testament)
+    return bibleData.books.filter((book) => resolveTestament(book) === testament)
   }, [bibleData.books, testament])
 
   const results = useMemo(() => {

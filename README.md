@@ -1,61 +1,110 @@
-# Bible Stories for Children
+[![Children's Bible — Bible Stories for Children](childrens-bible.png)](https://childrens-bible.vercel.app/)
 
-A beautiful, modern web application for reading classic Old and New Testament Bible stories for children, built with Next.js, TypeScript, and Tailwind CSS — styled like [bible-old-and-new-testament](https://github.com/raimonvibe/bible-old-and-new-testament).
+# 📖 Bible Stories for Children
 
-## Sources (Project Gutenberg)
+**A beautiful, modern reader for classic Old & New Testament stories — made for families, kids, and anyone who loves timeless scripture retold with care.**
 
-- [Child's Story of the Bible](https://www.gutenberg.org/ebooks/25309) by Mary A. Lathbury — 34 Old Testament stories and 48 New Testament stories
-- [Mother Stories from the New Testament](https://www.gutenberg.org/ebooks/17163) by Anonymous — 45 New Testament stories
+🌐 **Live app:** [childrens-bible.vercel.app](https://childrens-bible.vercel.app/)
 
-All texts are public domain in the United States.
+---
 
-## Features
+## ✨ Why you'll love it
 
-- **127 Bible stories** across Old and New Testament collections
-- **Beautiful design** with beige linear gradients and elegant typography
-- **Responsive** layout for mobile, tablet, and desktop
-- **Easy navigation** — browse collections, pick stories, move prev/next
-- **Search**, dark mode, and read-aloud support
+Bring Project Gutenberg's beloved children's Bible collections into one calm, readable experience — no ads, no clutter, just stories.
 
-## Getting Started
+| | |
+|---|---|
+| 📚 **127 stories** | Old & New Testament collections in one place |
+| 🔍 **Smart search** | Find paragraphs fast, with highlights & scroll-to-match |
+| 🎧 **Read aloud** | Listen to stories or selected text with built-in controls |
+| 🌙 **Dark mode** | Easy on the eyes for bedtime reading |
+| 📱 **Responsive** | Looks great on phone, tablet, and desktop |
+| 🎨 **Thoughtful design** | Warm beige tones, elegant typography, smooth navigation |
+
+---
+
+## 📜 Story sources (public domain)
+
+All texts are **public domain** in the United States, from [Project Gutenberg](https://www.gutenberg.org/):
+
+| Book | Author | Stories |
+|------|--------|---------|
+| [Child's Story of the Bible](https://www.gutenberg.org/ebooks/25309) | Mary A. Lathbury | 34 OT + 48 NT |
+| [Mother Stories from the New Testament](https://www.gutenberg.org/ebooks/17163) | Anonymous | 45 NT |
+
+---
+
+## 🚀 Quick start
 
 ```bash
+git clone https://github.com/raimonvibe/childrens-bible.git
+cd childrens-bible
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Regenerate story data from source texts
-
-```bash
-npm run parse-gutenberg
-```
-
-Source texts live in `source/` and parsed JSON is written to `data/`.
-
-### Production build
+### 🏗️ Production build
 
 ```bash
 npm run build
 npm start
 ```
 
-## Project Structure
+### 🔄 Regenerate story data
 
-```
-├── app/                    # Next.js App Router pages and API
-├── components/             # UI components (BookSelector, BibleReader, etc.)
-├── data/                   # Parsed story JSON
-├── scripts/                # Gutenberg parser
-└── source/                 # Raw Project Gutenberg text files
+Raw Gutenberg texts live in `source/`; parsed JSON is written to `data/`:
+
+```bash
+npm run parse-gutenberg
 ```
 
-## Technology Stack
+---
 
-- Next.js 16, TypeScript, Tailwind CSS, Lucide React
-- Google Fonts: Playfair Display, Merriweather, Inter
+## 🧭 How to use the app
 
-## License
+1. **Browse** — Pick a collection (Old or New Testament)
+2. **Read** — Open any story and use **Previous / Next** to keep going
+3. **Search** — Tap **Search**, type a word or phrase, and jump straight to the match
+4. **Listen** — Use the read-aloud panel to hear a story or a highlighted selection
 
-This project uses public domain texts from Project Gutenberg.
+---
+
+## 🛠️ Tech stack
+
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Fonts:** Playfair Display, Merriweather, Inter
+
+---
+
+## 📁 Project structure
+
+```
+├── app/              # Pages, layout, and /api/bible-data
+├── components/       # BookSelector, BibleReader, AdvancedSearch, etc.
+├── data/             # Parsed story JSON (OT + NT)
+├── hooks/            # Read-aloud and viewport helpers
+├── lib/              # Search, read-aloud utilities
+├── public/           # Favicon, manifest, OG image
+├── scripts/          # Gutenberg parser
+└── source/           # Original .txt files from Project Gutenberg
+```
+
+---
+
+## 🤝 Related
+
+Styled with the same warm, readable feel as [bible-old-and-new-testament](https://github.com/raimonvibe/bible-old-and-new-testament).
+
+---
+
+## 📄 License
+
+Story texts are **public domain** via Project Gutenberg.  
+Application code is open source — see the repository for details.
+
+Made with ❤️ for families and readers everywhere.
