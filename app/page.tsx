@@ -5,7 +5,8 @@ import BookSelector from '@/components/BookSelector'
 import ChapterSelector from '@/components/ChapterSelector'
 import BibleReader from '@/components/BibleReader'
 import ThemeToggle from '@/components/ThemeToggle'
-import { BookMarked, Heart, Search } from 'lucide-react'
+import SiteFooter from '@/components/SiteFooter'
+import { BookMarked, Search } from 'lucide-react'
 import AdvancedSearch, { type SearchSelectionContext } from '@/components/AdvancedSearch'
 import type { HighlightOptions, SearchResult } from '@/lib/bibleSearch'
 
@@ -171,6 +172,11 @@ export default function Home() {
     return currentChapterIndex < selectedBook.chapters.length - 1 || currentBookIndex < bibleData.books.length - 1
   })()
 
+  const totalStories = bibleData.books.reduce(
+    (sum, book) => sum + book.chapters.length,
+    0,
+  )
+
   return (
     <div className="min-h-screen py-6 md:py-10 px-4 md:px-6 lg:px-8">
       <div
@@ -245,20 +251,13 @@ export default function Home() {
             />
           )}
         </div>
-
-        {/* Footer */}
-        <footer data-read-aloud-ignore className="text-center text-beige-600 dark:text-brown-400 font-sans text-sm md:text-base py-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span>Made with</span>
-            <Heart className="w-4 h-4 fill-beige-600 dark:fill-brown-400" />
-            <span>for families and readers</span>
-          </div>
-          <p className="text-beige-500 dark:text-brown-500 text-xs md:text-sm">
-            Public domain texts from Project Gutenberg • {bibleData.books.length} collections •{' '}
-            {bibleData.books.reduce((sum, book) => sum + book.chapters.length, 0)} stories
-          </p>
-        </footer>
       </div>
+
+      <SiteFooter
+        bibleName={bibleData.bibleName}
+        collectionCount={bibleData.books.length}
+        storyCount={totalStories}
+      />
     </div>
   )
 }
