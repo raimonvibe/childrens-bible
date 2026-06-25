@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect, useMemo } from 'react'
 import { ChevronLeft, ChevronRight, Home } from 'lucide-react'
+import { highlightMatch, type HighlightOptions } from '@/lib/bibleSearch'
 
 interface Chapter {
   id: string
@@ -18,6 +20,7 @@ interface BibleReaderProps {
   hasPrev: boolean
   hasNext: boolean
   onBackToBooks?: () => void
+  searchHighlight?: HighlightOptions | null
 }
 
 function escapeHtml(text: string): string {
@@ -28,12 +31,23 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function formatStoryHtml(content: string): string {
+function formatStoryHtml(content: string, searchHighlight?: HighlightOptions | null): string {
   return content
     .split(/\n\n+/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
-    .map((paragraph) => `<p class="verse">${escapeHtml(paragraph).replace(/\n/g, ' ')}</p>`)
+    .map((paragraph, index) => {
+      const normalizedParagraph = paragraph.replace(/\n/g, ' ')
+      const passageNumber = index + 1
+      const shouldHighlight =
+        searchHighlight &&
+        (!searchHighlight.passageNumber || searchHighlight.passageNumber === passageNumber)
+      const html = shouldHighlight
+        ? highlightMatch(normalizedParagraph, searchHighlight)
+        : escapeHtml(normalizedParagraph)
+
+      return `<p class="verse" data-passage="${passageNumber}">${html}</p>`
+    })
     .join('')
 }
 
@@ -46,8 +60,26 @@ export default function BibleReader({
   hasPrev,
   hasNext,
   onBackToBooks,
+  searchHighlight = null,
 }: BibleReaderProps) {
-  const processedContent = formatStoryHtml(chapter.content)
+  const processedContent = useMemo(
+    () => formatStoryHtml(chapter.content, searchHighlight),
+    [chapter.content, searchHighlight],
+  )
+
+  useEffect(() => {
+    if (!searchHighlight?.query.trim()) return
+
+    const timer = window.setTimeout(() => {
+      const passageSelector = searchHighlight.passageNumber
+        ? `[data-passage="${searchHighlight.passageNumber}"] .search-highlight`
+        : '.search-highlight'
+      const firstMatch = document.querySelector(passageSelector)
+      firstMatch?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 150)
+
+    return () => window.clearTimeout(timer)
+  }, [chapter.id, searchHighlight])
 
   return (
     <article className="card-surface p-4 md:p-6 lg:p-10">

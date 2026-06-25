@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import {
   type BibleData,
+  type MatchMode,
   type SearchResult,
   getTestament,
   highlightMatch,
@@ -17,15 +18,20 @@ import {
   searchBible,
 } from '@/lib/bibleSearch'
 
+export interface SearchSelectionContext {
+  query: string
+  matchMode: MatchMode
+  caseSensitive: boolean
+}
+
 interface AdvancedSearchProps {
   bibleData: BibleData
   isOpen: boolean
   onClose: () => void
-  onSelectResult: (result: SearchResult) => void
+  onSelectResult: (result: SearchResult, context: SearchSelectionContext) => void
 }
 
 type TestamentFilter = 'all' | 'old' | 'new'
-type MatchMode = 'phrase' | 'all' | 'any'
 
 export default function AdvancedSearch({
   bibleData,
@@ -38,7 +44,7 @@ export default function AdvancedSearch({
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [testament, setTestament] = useState<TestamentFilter>('all')
   const [bookId, setBookId] = useState<string>('')
-  const [matchMode, setMatchMode] = useState<MatchMode>('phrase')
+  const [matchMode, setMatchMode] = useState<MatchMode>('all')
   const [caseSensitive, setCaseSensitive] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
 
@@ -249,7 +255,13 @@ export default function AdvancedSearch({
               <li key={`${result.chapterId}-${result.verseNumber}`}>
                 <button
                   type="button"
-                  onClick={() => onSelectResult(result)}
+                  onClick={() =>
+                    onSelectResult(result, {
+                      query: debouncedQuery,
+                      matchMode,
+                      caseSensitive,
+                    })
+                  }
                   className="w-full text-left p-4 rounded-xl btn-surface hover:shadow-md transition-all group"
                 >
                   <div className="flex items-center gap-2 mb-2">
@@ -264,7 +276,11 @@ export default function AdvancedSearch({
                   <p
                     className="text-sm md:text-base leading-relaxed text-beige-700 dark:text-brown-300 font-serif line-clamp-3"
                     dangerouslySetInnerHTML={{
-                      __html: highlightMatch(result.text, debouncedQuery, caseSensitive),
+                      __html: highlightMatch(result.snippet, {
+                        query: debouncedQuery,
+                        matchMode,
+                        caseSensitive,
+                      }),
                     }}
                   />
                 </button>

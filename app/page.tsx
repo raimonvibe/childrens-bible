@@ -6,8 +6,8 @@ import ChapterSelector from '@/components/ChapterSelector'
 import BibleReader from '@/components/BibleReader'
 import ThemeToggle from '@/components/ThemeToggle'
 import { BookMarked, Heart, Search } from 'lucide-react'
-import AdvancedSearch from '@/components/AdvancedSearch'
-import type { SearchResult } from '@/lib/bibleSearch'
+import AdvancedSearch, { type SearchSelectionContext } from '@/components/AdvancedSearch'
+import type { HighlightOptions, SearchResult } from '@/lib/bibleSearch'
 
 interface Chapter {
   id: string
@@ -35,6 +35,7 @@ export default function Home() {
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null)
   const [view, setView] = useState<'books' | 'chapters' | 'reader'>('books')
   const [searchOpen, setSearchOpen] = useState(false)
+  const [readerSearchHighlight, setReaderSearchHighlight] = useState<HighlightOptions | null>(null)
 
   useEffect(() => {
     // Load Bible data
@@ -72,28 +73,41 @@ export default function Home() {
   const handleSelectBook = (bookId: string) => {
     setSelectedBookId(bookId)
     setSelectedChapterId(null)
+    setReaderSearchHighlight(null)
     setView('chapters')
   }
 
   const handleSelectChapter = (chapterId: string) => {
     setSelectedChapterId(chapterId)
+    setReaderSearchHighlight(null)
     setView('reader')
   }
 
   const handleBackToBooks = () => {
     setSelectedBookId(null)
     setSelectedChapterId(null)
+    setReaderSearchHighlight(null)
     setView('books')
   }
 
   const handleBackToChapters = () => {
     setSelectedChapterId(null)
+    setReaderSearchHighlight(null)
     setView('chapters')
   }
 
-  const handleSelectSearchResult = (result: SearchResult) => {
+  const handleSelectSearchResult = (
+    result: SearchResult,
+    context: SearchSelectionContext,
+  ) => {
     setSelectedBookId(result.bookId)
     setSelectedChapterId(result.chapterId)
+    setReaderSearchHighlight({
+      query: context.query,
+      matchMode: context.matchMode,
+      caseSensitive: context.caseSensitive,
+      passageNumber: result.verseNumber,
+    })
     setView('reader')
     setSearchOpen(false)
   }
@@ -104,12 +118,14 @@ export default function Home() {
 
     if (currentChapterIndex > 0) {
       // Go to previous chapter in same book
+      setReaderSearchHighlight(null)
       setSelectedChapterId(selectedBook.chapters[currentChapterIndex - 1].id)
     } else {
       // Go to last chapter of previous book
       const currentBookIndex = bibleData.books.findIndex((b) => b.id === selectedBook.id)
       if (currentBookIndex > 0) {
         const prevBook = bibleData.books[currentBookIndex - 1]
+        setReaderSearchHighlight(null)
         setSelectedBookId(prevBook.id)
         setSelectedChapterId(prevBook.chapters[prevBook.chapters.length - 1].id)
       }
@@ -122,12 +138,14 @@ export default function Home() {
 
     if (currentChapterIndex < selectedBook.chapters.length - 1) {
       // Go to next chapter in same book
+      setReaderSearchHighlight(null)
       setSelectedChapterId(selectedBook.chapters[currentChapterIndex + 1].id)
     } else {
       // Go to first chapter of next book
       const currentBookIndex = bibleData.books.findIndex((b) => b.id === selectedBook.id)
       if (currentBookIndex < bibleData.books.length - 1) {
         const nextBook = bibleData.books[currentBookIndex + 1]
+        setReaderSearchHighlight(null)
         setSelectedBookId(nextBook.id)
         setSelectedChapterId(nextBook.chapters[0].id)
       }
@@ -223,6 +241,7 @@ export default function Home() {
               onNextChapter={handleNextChapter}
               hasPrev={hasPrev}
               hasNext={hasNext}
+              searchHighlight={readerSearchHighlight}
             />
           )}
         </div>
